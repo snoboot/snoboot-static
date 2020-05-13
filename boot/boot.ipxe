@@ -1,0 +1,19 @@
+#!ipxe
+
+#dhcp
+
+set alpine-version v3.11
+set flavor lts
+set mirror-base http://dl-cdn.alpinelinux.org/alpine
+
+set release-base ${mirror-base}/${alpine-version}
+set repo-url ${release-base}/main
+set netboot-base ${release-base}/releases/x86_64/netboot
+set modloop-url ${netboot-base}/modloop-${flavor}
+set kernel-params ip=dhcp ipv6.disable=0 cgroup_enable=memory swapaccount=1 modules=loop,squashfs nomodeset alpine_repo=${repo-url} modloop=${modloop-url} apkovl=https://github.com/snoboot/snoboot-overlay/releases/download/test/default.tar.gz snoboot.keyurl=https://raw.githubusercontent.com/snoboot/snoboot-static/master/boot/key
+
+kernel ${netboot-base}/vmlinuz-${flavor} ${kernel-params}
+initrd ${netboot-base}/initramfs-${flavor}
+initrd https://raw.githubusercontent.com/snoboot/snoboot-static/master/boot/ca-cert.cpio
+
+boot
